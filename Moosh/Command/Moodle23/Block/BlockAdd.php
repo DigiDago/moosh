@@ -102,7 +102,7 @@ class BlockAdd extends MooshCommand
         $blockinstance->defaultweight = $weight;
         $blockinstance->configdata = '';
 
-        if ($context->id == '2' && $blocktype == 'html') {
+        if ($context == '2' && $blocktype == 'html') {
             $blockinstance->configdata = $configdata;
         }
         $blockinstance->id = $DB->insert_record('block_instances', $blockinstance);
