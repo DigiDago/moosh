@@ -24,6 +24,7 @@ class BlockAdd extends MooshCommand
         $this->addArgument('pagetypepattern');
         $this->addArgument('region');
         $this->addArgument('weight');
+        $this->addArgument('configdata');
         //$this->addArgument('showinsubcontexts');
         $this->addOption('s|showinsubcontexts', 'Display block on all sub contexts');
 
@@ -41,6 +42,7 @@ class BlockAdd extends MooshCommand
         $pagetypepattern = $this->arguments[3]; // in which page types it will be available ('course-*' , 'mod-*' ...)
         $region = $this->arguments[4]; // into which page region it will be inserted ('side-pre' , 'side-post' ...)
         $weight = $this->arguments[5]; // sort/insert order
+        $configdata = $this->arguments[6]; // configdata
 
         //$showinsubcontexts = $this->arguments[6]; // show block in sub context?
         if ($this->expandedOptions['showinsubcontexts']) {
@@ -52,11 +54,11 @@ class BlockAdd extends MooshCommand
         switch ($mode) {
             case 'category':
                 $context = context_coursecat::instance($id /* categoryid */, MUST_EXIST);
-                self::blockAdd($context->id /* categorycontextid */,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts);
+                self::blockAdd($context->id /* categorycontextid */,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts, $configdata);
                 break;
             case 'course':
                 $context = context_course::instance($id /* courseid */, MUST_EXIST);
-                self::blockAdd($context->id,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts);
+                self::blockAdd($context->id,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts, $configdata);
                 break;
 
             case 'categorycourses':
@@ -64,19 +66,19 @@ class BlockAdd extends MooshCommand
                 $courselist = get_courses($id /* categoryid */,'','c.id');
                 foreach ($courselist as $course) {
                     $context = context_course::instance($course->id /* courseid */, MUST_EXIST);
-                    self::blockAdd($context->id,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts);
+                    self::blockAdd($context->id,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts, $configdata);
                     echo "debug: courseid=$course->id \n";
                 }
                 break;
             case 'home':
                 $context->id = '2';
-                self::blockAdd($context->id,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts);
+                self::blockAdd($context->id,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts, $configdata);
                 break;
         }
 
     }
 
-    private function blockAdd($context,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts=true){
+    private function blockAdd($context,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts=true, $configdata){
         global $CFG,$DB;
         require_once($CFG->dirroot . '/lib/blocklib.php');
 
@@ -100,8 +102,8 @@ class BlockAdd extends MooshCommand
         $blockinstance->defaultweight = $weight;
         $blockinstance->configdata = '';
 
-        if ($context->id = '2') {
-            $blockinstance->config->text = 'This is some HTML text'; 
+        if ($context->id == '2' && $blocktype == 'html') {
+            $blockinstance->configdata = $configdata;
         }
         $blockinstance->id = $DB->insert_record('block_instances', $blockinstance);
 
