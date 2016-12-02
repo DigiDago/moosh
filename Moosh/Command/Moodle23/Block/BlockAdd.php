@@ -68,6 +68,10 @@ class BlockAdd extends MooshCommand
                     echo "debug: courseid=$course->id \n";
                 }
                 break;
+            case 'home':
+                $context->id = '2';
+                self::blockAdd($context->id,$blocktype,$pagetypepattern,$region,$weight,$showinsubcontexts);
+                break;
         }
 
     }
