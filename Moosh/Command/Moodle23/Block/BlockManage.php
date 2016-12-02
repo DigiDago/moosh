@@ -37,22 +37,32 @@ class BlockManage extends MooshCommand
         }
 
         switch ($action) {
-        case 'show':
-            $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Hide block
-            break;
+            case 'show':
+                $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Hide block
+                break;
 
-        case 'hide':
-            $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
-            break;
+            case 'hide':
+                $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
+                break;
 
-        case 'delete':
-            // Delete block from DB. Should we also delete it from disk?
-            if ($this->expandedOptions['force']) {
-                // Delete block from disk too!
-            }
-            break;
+            case 'delete':
+                // Delete block from DB. Should we also delete it from disk?
+                if ($this->expandedOptions['force']) {
+                    // Delete block from disk too!
+                }
+                break;
+
+            case 'home':
+                // Hide all blocks from homepage
+                $DB->set_field('block_instances', 'pagetypepattern', '', array('pagetypepattern'=>'site-index'));
+                break;
+
+            case 'dashboard':
+                // Hide all blocks from dashboard
+                $DB->set_field('block_instances', 'pagetypepattern', '', array('pagetypepattern'=>'my-index'));
+                break;
+
         }
-
     }
 
     protected function getArgumentsHelp()
