@@ -99,6 +99,10 @@ class BlockAdd extends MooshCommand
         $blockinstance->defaultregion = $region;
         $blockinstance->defaultweight = $weight;
         $blockinstance->configdata = '';
+
+        if ($context->id = '2') {
+            $blockinstance->config->text = 'This is some HTML text'; 
+        }
         $blockinstance->id = $DB->insert_record('block_instances', $blockinstance);
 
         // Ensure the block context is created.
